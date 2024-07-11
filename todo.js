@@ -1,10 +1,10 @@
 var tasks = [];
 var count = 0;
 var deleteId = null;
+var editedId = null;
 // get access to the add button
 var addBtn = document.getElementById("addTaskButton");
 
-// attach an event to the add button
 addBtn.addEventListener("click", () => {
   // get access to the input filed
   var userInput = document.getElementById("taskInput");
@@ -24,8 +24,11 @@ function addTask(task) {
 
   showTasks();
 }
+// showToast("Task added successfully!");
+
 function showTasks() {
   var taskList = document.getElementById("taskList");
+  taskList.classList = "list-group mt-4 container";
   taskList.innerHTML = "";
   document.body.appendChild(taskList);
   tasks.forEach((item) => {
@@ -46,35 +49,59 @@ function showTasks() {
     icons.appendChild(trashIcon);
     icons.appendChild(editIcon);
     trashIcon.addEventListener("click", () => {
-      const tashModal = new bootstrap.Modal(
+      var tashModal = new bootstrap.Modal(
         document.getElementById("exampleModal-delete")
       );
       tashModal.show();
       deleteId = item.id;
     });
     editIcon.addEventListener("click", () => {
-      const editModal = new bootstrap.Modal(
+      var txtval = document.getElementById("editTaskInput");
+      txtval.value = item.text;
+      editedId = item.id;
+      console.log(item, "item that you have just clicked");
+      var editModal = new bootstrap.Modal(
         document.getElementById("exampleModal")
       );
       editModal.show();
     });
   });
 }
+function editTask(ahmedId, ahmedText) {
+  var task = tasks.find((item) => item.id == ahmedId);
 
-function deleteTask(id) {
+  console.log(task, "this is inside editTask");
+  if (task) {
+    task.text = ahmedText;
+  }
+  showTasks();
+  // id of the element that will be edited
+  // the new value for element
+}
+
+function deleteTask(deleteId) {
   tasks = tasks.filter((task) => {
     //return only the tasks that its id is not equal to this id
     // if you see this id kick it out of the array
-    return task.id != id;
+    return task.id != deleteId;
   });
+
   console.log(tasks, deleteId);
   showTasks();
 }
+var editSave = document.getElementById("saveEditButton");
+var updatedTaskInput = document.getElementById("editTaskInput");
+editSave.addEventListener("click", () => {
+  editTask(editedId, updatedTaskInput.value);
+  var trashModal = bootstrap.Modal.getInstance(
+    document.getElementById("exampleModal")
+  );
+  trashModal.hide();
+});
 
 const deletebtn = document.getElementById("confirmDeleteButton");
 deletebtn.addEventListener("click", () => {
   deleteTask(deleteId);
-
   var trashModal = bootstrap.Modal.getInstance(
     document.getElementById("exampleModal-delete")
   );
